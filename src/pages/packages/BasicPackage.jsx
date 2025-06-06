@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { usePackage } from "../../context/PackageContext";
+
 
 const BasicPackage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { purchasePackage } = usePackage();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const packageDetails = {
+    id: "basic",
     name: "Basic",
     features: [
       "Access to 5 courses",
@@ -20,235 +24,211 @@ const BasicPackage = () => {
     mrp: "₹2,999",
     price: "₹1,999",
     description: "Perfect for beginners looking to explore digital skills with lifetime access",
-    gradient: "from-blue-600 to-violet-600",
-    bgGradient: "from-indigo-950 via-blue-900 to-violet-900",
+    gradient: "from-blue-500 to-indigo-600",
+    bgGradient: "from-slate-900 via-blue-900/10 to-slate-900",
     image: "/images/basic-banner.jpg",
     highlights: [
-      "Lifetime Access",
       "5 Courses",
-      "Basic Support"
+      "Basic Support",
+      "Monthly Sessions"
     ],
     benefits: [
       {
-        title: "Starter Access",
-        description: "Get access to 5 essential courses with lifetime validity"
-      },
-      {
-        title: "Community Learning",
-        description: "Join our active learning community"
+        title: "Basic Access",
+        description: "Get access to 5 courses with lifetime validity"
       },
       {
         title: "Basic Support",
-        description: "Email support for your learning journey"
+        description: "Get email support during business hours"
+      },
+      {
+        title: "Monthly Sessions",
+        description: "Join interactive monthly live sessions"
       }
     ]
   };
 
   const handlePurchase = async () => {
     if (!user) {
-      navigate('/login', { state: { from: '/packages/basic' } });
+      toast.error("Please login to purchase this package");
+      navigate("/login");
       return;
     }
 
-    setIsProcessing(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      alert('Thank you for your purchase! You will receive an email with further instructions.');
-      navigate('/dashboard');
-    } catch (error) {
-      alert('There was an error processing your purchase. Please try again.');
-    } finally {
-      setIsProcessing(false);
+    if (!isProcessing) {
+      setIsProcessing(true);
+      try {
+        const result = await purchasePackage(packageDetails.id);
+        if (result.success) {
+          toast.success("Package purchased successfully!");
+          navigate("/dashboard");
+        } else {
+          toast.error(result.message);
+        }
+      } catch (error) {
+        toast.error("There was an error processing your payment. Please try again.");
+      } finally {
+        setIsProcessing(false);
+      }
     }
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${packageDetails.bgGradient} py-20`}>
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Floating Elements */}
-          <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-32 h-32 bg-violet-400/20 rounded-full blur-xl animate-pulse-delayed"></div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-8 relative">
-              <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                <div className="relative">
-                  <h1 className={`text-5xl font-bold bg-gradient-to-r ${packageDetails.gradient} bg-clip-text text-transparent mb-4`}>
-                    {packageDetails.name} Package
-                  </h1>
-                  <div className="space-y-2">
-                    <p className="text-gray-400 text-lg line-through">MRP - {packageDetails.mrp}</p>
-                    <p className="text-3xl font-bold text-white">
-                      Special Price - {packageDetails.price}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-xl text-gray-300 leading-relaxed">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Hero Section */}
+      <div className="relative pt-20 pb-32 overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:60px_60px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/50" />
+        
+        <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Package Header */}
+            <div className="text-center mb-16">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
+                <span className="inline-block bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  Basic Package
+                </span>
+              </h1>
+              <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
                 {packageDetails.description}
               </p>
+            </div>
 
-              {/* Highlights */}
-              <div className="grid grid-cols-3 gap-4">
-                {packageDetails.highlights.map((highlight, index) => (
-                  <div 
-                    key={index}
-                    className={`bg-gradient-to-br ${packageDetails.gradient} p-4 rounded-xl text-center transform hover:scale-105 transition-all duration-300 cursor-pointer`}
-                  >
-                    <p className="text-white font-semibold">{highlight}</p>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={handlePurchase}
-                  disabled={isProcessing}
-                  className={`inline-block bg-gradient-to-r ${packageDetails.gradient} text-white px-8 py-4 rounded-xl font-bold text-lg hover:scale-105 transition-transform duration-300 text-center shadow-lg relative overflow-hidden group ${
-                    isProcessing ? 'opacity-75 cursor-not-allowed' : ''
-                  }`}
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Processing...
+            {/* Main Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+              {/* Left Column - Package Details */}
+              <div className="space-y-10">
+                {/* Price Card */}
+                <div className="bg-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+                  <div className="flex flex-col items-center">
+                    <p className="text-gray-400 text-lg line-through mb-2">MRP: {packageDetails.mrp}</p>
+                    <div className="text-5xl font-bold text-white mb-4">
+                      ₹1,999
+                      <span className="text-lg text-gray-400 ml-2">/ lifetime</span>
                     </div>
-                  ) : (
-                    <span className="relative z-10">Buy Now</span>
-                  )}
-                  <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
-                </button>
-                <Link
-                  to="/contact"
-                  className="inline-block bg-white/10 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-colors duration-300 text-center backdrop-blur-sm"
-                >
-                  Contact Support
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Image */}
-            <div className="relative">
-              <div className="relative z-10 transform hover:scale-105 transition-transform duration-500">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl blur opacity-50"></div>
-                <img
-                  src={packageDetails.image}
-                  alt={`${packageDetails.name} Package`}
-                  className="relative w-full h-auto rounded-2xl shadow-2xl"
-                />
-              </div>
-              {/* Decorative Elements */}
-              <div className={`absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-r ${packageDetails.gradient} rounded-full opacity-20 blur-3xl animate-pulse`}></div>
-              <div className={`absolute -bottom-4 -left-4 w-72 h-72 bg-gradient-to-r ${packageDetails.gradient} rounded-full opacity-20 blur-3xl animate-pulse-delayed`}></div>
-            </div>
-          </div>
-
-          {/* Features Section */}
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">Package Features</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {packageDetails.features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-blue-400/50 transition-colors duration-300 group hover:transform hover:scale-105"
-                >
-                  <div className="flex items-start">
-                    <span className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-r ${packageDetails.gradient} flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300`}>
-                      <svg
-                        className="w-5 h-5 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </span>
-                    <span className="text-gray-200 text-lg group-hover:text-white transition-colors duration-300">{feature}</span>
+                    <button
+                      onClick={handlePurchase}
+                      disabled={isProcessing}
+                      className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl py-4 px-8 font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isProcessing ? "Processing..." : "Get Started Now"}
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Benefits Section */}
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">Why Choose Basic Package?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {packageDetails.benefits.map((benefit, index) => (
-                <div
-                  key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-blue-400/50 transition-colors duration-300 transform hover:scale-105"
-                >
-                  <h3 className="text-xl font-bold text-white mb-2">{benefit.title}</h3>
-                  <p className="text-gray-300">{benefit.description}</p>
+                {/* Features List */}
+                <div className="bg-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+                  <h3 className="text-xl font-semibold text-white mb-6">What's Included</h3>
+                  <div className="space-y-4">
+                    {packageDetails.features.map((feature, index) => (
+                      <div key={index} className="flex items-center space-x-3">
+                        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center">
+                          <svg className="w-3.5 h-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-gray-300">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Right Column - Benefits & Highlights */}
+              <div className="space-y-10">
+                {/* Highlights */}
+                <div className="grid grid-cols-3 gap-4">
+                  {packageDetails.highlights.map((highlight, index) => (
+                    <div
+                      key={index}
+                      className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl border border-white/10 rounded-xl p-4 text-center"
+                    >
+                      <p className="text-white font-semibold">{highlight}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Benefits */}
+                <div className="bg-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+                  <h3 className="text-xl font-semibold text-white mb-6">Key Benefits</h3>
+                  <div className="space-y-6">
+                    {packageDetails.benefits.map((benefit, index) => (
+                      <div key={index} className="space-y-2">
+                        <h4 className="text-lg font-medium text-blue-400">{benefit.title}</h4>
+                        <p className="text-gray-300">{benefit.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Support Card */}
+                <div className="bg-gradient-to-br from-blue-500/10 to-indigo-500/10 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="p-3 bg-blue-500/20 rounded-lg">
+                      <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-white">Basic Support</h4>
+                      <p className="text-gray-400">Email support during business hours</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/contact"
+                    className="block w-full text-center bg-white/10 hover:bg-white/20 text-white rounded-xl py-3 px-4 font-medium transition-colors duration-200"
+                  >
+                    Contact Support
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Course Preview Section */}
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">Available Courses</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Course Preview Section */}
+      <div className="bg-slate-900/50 py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl font-bold text-white mb-12 text-center">Available Courses</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
                   title: "Digital Marketing Basics",
                   description: "Learn the fundamentals of digital marketing",
-                  duration: "4 weeks"
+                  duration: "6 weeks",
+                  icon: "M13 10V3L4 14h7v7l9-11h-7z"
                 },
                 {
-                  title: "Social Media Strategy",
-                  description: "Master social media marketing essentials",
-                  duration: "3 weeks"
+                  title: "Social Media Essentials",
+                  description: "Master social media marketing basics",
+                  duration: "4 weeks",
+                  icon: "M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                 },
                 {
-                  title: "Content Creation",
-                  description: "Create engaging content for your audience",
-                  duration: "4 weeks"
-                },
-                {
-                  title: "SEO Fundamentals",
-                  description: "Understand search engine optimization basics",
-                  duration: "3 weeks"
-                },
-                {
-                  title: "Email Marketing",
-                  description: "Build effective email marketing campaigns",
-                  duration: "2 weeks"
+                  title: "Content Writing 101",
+                  description: "Learn basic content writing skills",
+                  duration: "5 weeks",
+                  icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
                 }
               ].map((course, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-blue-400/50 transition-colors duration-300 transform hover:scale-105"
+                  className="group bg-white/[0.02] hover:bg-white/[0.05] backdrop-blur-xl rounded-2xl p-6 border border-white/10 transition-all duration-200"
                 >
-                  <h3 className="text-xl font-bold text-white mb-2">{course.title}</h3>
-                  <p className="text-gray-300 mb-4">{course.description}</p>
-                  <div className="flex items-center text-sm text-gray-400">
-                    <svg
-                      className="w-4 h-4 mr-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
+                  <div className="mb-4">
+                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                      <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={course.icon} />
+                      </svg>
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">{course.title}</h3>
+                  <p className="text-gray-400 mb-4">{course.description}</p>
+                  <div className="flex items-center text-gray-500">
+                    <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     {course.duration}
                   </div>
@@ -256,35 +236,39 @@ const BasicPackage = () => {
               ))}
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* FAQ Section */}
-          <div className="mt-20">
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">Frequently Asked Questions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* FAQ Section */}
+      <div className="bg-slate-900 py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-3xl font-bold text-white mb-12 text-center">Frequently Asked Questions</h2>
+            <div className="space-y-6">
               {[
                 {
                   question: "What's included in the Basic package?",
-                  answer: "The Basic package includes access to 5 foundational courses, email support, community access, and basic learning resources."
+                  answer: "The Basic package includes access to 5 courses, basic support, community access, monthly live sessions, basic resources, and email support."
                 },
                 {
-                  question: "Can I upgrade to Premium later?",
-                  answer: "Yes, you can upgrade to Premium or Premium Max at any time and only pay the difference."
+                  question: "How is Basic different from Pro?",
+                  answer: "The Basic package offers essential features for beginners, while Pro includes more courses, priority support, and weekly live sessions."
                 },
                 {
                   question: "What kind of support is included?",
-                  answer: "You get email support with a 48-hour response time for all your learning questions."
+                  answer: "You get email support during business hours and access to our community forum."
                 },
                 {
-                  question: "Is there a money-back guarantee?",
-                  answer: "Yes, we offer a 30-day money-back guarantee if you're not satisfied with the Basic package."
+                  question: "Is there a payment plan?",
+                  answer: "Yes, we offer flexible EMI options for the Basic package. Contact support for details."
                 }
               ].map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-blue-400/50 transition-colors duration-300"
+                  className="bg-white/[0.02] backdrop-blur-xl rounded-xl p-6 border border-white/10"
                 >
-                  <h3 className="text-xl font-bold text-white mb-2">{faq.question}</h3>
-                  <p className="text-gray-300">{faq.answer}</p>
+                  <h3 className="text-lg font-semibold text-white mb-2">{faq.question}</h3>
+                  <p className="text-gray-400">{faq.answer}</p>
                 </div>
               ))}
             </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { PackageProvider } from './context/PackageContext';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -22,39 +23,41 @@ import './App.css';
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="flex flex-col min-h-screen bg-gradient-to-br from-black via-gray-900 to-purple-900">
-          <Navbar />
-          <main className="flex-grow pt-16">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/packages">
-                <Route index element={<Navigate to="/" replace />} />
-                <Route path="basic" element={<BasicPackage />} />
-                <Route path="pro" element={<ProPackage />} />
-                <Route path="advanced" element={<AdvancedPackage />} />
-                <Route path="premium" element={<PremiumPackage />} />
-                <Route path="premium-max" element={<PremiumMaxPackage />} />
-              </Route>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <PackageProvider>
+        <Router>
+          <div className="flex flex-col min-h-screen bg-gradient-to-br from-black via-gray-900 to-purple-900">
+            <Navbar />
+            <main className="flex-grow pt-16">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/courses" element={<Courses />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/packages">
+                  <Route index element={<Navigate to="/" replace />} />
+                  <Route path="basic" element={<BasicPackage />} />
+                  <Route path="pro" element={<ProPackage />} />
+                  <Route path="advanced" element={<AdvancedPackage />} />
+                  <Route path="premium" element={<PremiumPackage />} />
+                  <Route path="premium-max" element={<PremiumMaxPackage />} />
+                </Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </PackageProvider>
     </AuthProvider>
   );
 }

@@ -224,7 +224,7 @@ const Home = () => {
                 route: "/packages/basic"
               },
               {
-                name: "Pro",
+                name: "Pro package",
                 features: [
                   "Access to 15 courses",
                   "Priority Support",
@@ -294,9 +294,8 @@ const Home = () => {
             ].map((pkg, index) => (
               <div
                 key={index}
-                className={`relative group bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
-                  pkg.recommended ? "ring-2 ring-indigo-500/50" : ""
-                }`}
+                className={`relative group bg-white/10 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500 hover:scale-105 hover:shadow-2xl ${pkg.recommended ? "ring-2 ring-indigo-500/50" : ""
+                  }`}
               >
                 {/* Animated gradient border */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
@@ -476,203 +475,137 @@ const Home = () => {
         <div className="absolute bottom-0 right-0 w-60 h-60 bg-indigo-500/10 rounded-full filter blur-3xl -z-0"></div>
       </section>
 
-      {/* <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-900 to-gray-800">
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-white">Why Choose Edunexx</h2>
-      <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-        Your Gateway to Lifelong Learning and Professional Success
-      </p>
-    </div>
 
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      {[
-        {
-          icon: (
-            <div className="relative">
-              <div className="absolute inset-0 bg-purple-500 rounded-lg blur opacity-75"></div>
-              <div className="relative flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-purple-600 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
-              </div>
-            </div>
-          ),
-          title: "Expert Instructors",
-          description: "Learn from industry leaders with real-world experience and proven teaching methods.",
-        },
-        {
-          icon: (
-            <div className="relative">
-              <div className="absolute inset-0 bg-indigo-500 rounded-lg blur opacity-75"></div>
-              <div className="relative flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-indigo-600 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-            </div>
-          ),
-          title: "Expanding Curriculum",
-          description: "Access our ever-growing library with new courses added monthly across emerging technologies.",
-        },
-        {
-          icon: (
-            <div className="relative">
-              <div className="absolute inset-0 bg-pink-500 rounded-lg blur opacity-75"></div>
-              <div className="relative flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-pink-600 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </div>
-            </div>
-          ),
-          title: "Vibrant Community",
-          description: "Connect with peers, mentors, and industry professionals in our active learning network.",
-        },
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-2"
-        >
-          <div className="flex justify-center mb-6">{item.icon}</div>
-          <h3 className="text-xl font-bold mb-3 text-white text-center">{item.title}</h3>
-          <p className="text-gray-300 text-center">{item.description}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section> */}
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-white">Why Choose DigitalBillionaire</h2>
+            <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+              Your Gateway to Lifelong Learning and Professional Success
+            </p>
+          </div>
 
-<section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-gray-900 to-gray-800">
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-      <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-white">Why Choose DigitalBillionaire</h2>
-      <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
-        Your Gateway to Lifelong Learning and Professional Success
-      </p>
-    </div>
+          {/* Enhanced auto-sliding carousel */}
+          <div className="relative overflow-hidden group">
+            {/* Gradient fade edges */}
+            <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-gray-900 to-transparent z-10"></div>
+            <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-gray-900 to-transparent z-10"></div>
 
-    {/* Enhanced auto-sliding carousel */}
-    <div className="relative overflow-hidden group">
-      {/* Gradient fade edges */}
-      <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-gray-900 to-transparent z-10"></div>
-      <div className="absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-gray-900 to-transparent z-10"></div>
-      
-      {/* Carousel track with duplicated items for seamless looping */}
-      <div className="flex animate-infinite-scroll space-x-6 sm:space-x-8">
-        {[...Array(2)].map((_, loopIndex) => (
-          <>
+            {/* Carousel track with duplicated items for seamless looping */}
+            <div className="flex animate-infinite-scroll space-x-6 sm:space-x-8">
+              {[...Array(2)].map((_, loopIndex) => (
+                <>
+                  {[
+                    {
+                      icon: (
+                        <div className="relative group-hover:pause-animation">
+                          <div className="absolute inset-0 bg-purple-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                          <div className="relative flex items-center justify-center h-14 w-14 bg-purple-600 rounded-lg transition-all duration-500 group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                          </div>
+                        </div>
+                      ),
+                      title: "Expert Instructors",
+                      description: "Learn from industry leaders with real-world experience and proven teaching methods.",
+                      bg: "bg-gradient-to-br from-purple-900/30 to-purple-700/20"
+                    },
+                    {
+                      icon: (
+                        <div className="relative group-hover:pause-animation">
+                          <div className="absolute inset-0 bg-indigo-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                          <div className="relative flex items-center justify-center h-14 w-14 bg-indigo-600 rounded-lg transition-all duration-500 group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                          </div>
+                        </div>
+                      ),
+                      title: "Expanding Curriculum",
+                      description: "Access our ever-growing library with new courses added monthly across emerging technologies.",
+                      bg: "bg-gradient-to-br from-indigo-900/30 to-indigo-700/20"
+                    },
+                    {
+                      icon: (
+                        <div className="relative group-hover:pause-animation">
+                          <div className="absolute inset-0 bg-pink-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                          <div className="relative flex items-center justify-center h-14 w-14 bg-pink-600 rounded-lg transition-all duration-500 group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                          </div>
+                        </div>
+                      ),
+                      title: "Vibrant Community",
+                      description: "Connect with peers, mentors, and industry professionals in our active learning network.",
+                      bg: "bg-gradient-to-br from-pink-900/30 to-pink-700/20"
+                    },
+                    {
+                      icon: (
+                        <div className="relative group-hover:pause-animation">
+                          <div className="absolute inset-0 bg-blue-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                          <div className="relative flex items-center justify-center h-14 w-14 bg-blue-600 rounded-lg transition-all duration-500 group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                          </div>
+                        </div>
+                      ),
+                      title: "Fast Learning",
+                      description: "Accelerated courses designed to get you job-ready in weeks, not years.",
+                      bg: "bg-gradient-to-br from-blue-900/30 to-blue-700/20"
+                    },
+                    {
+                      icon: (
+                        <div className="relative group-hover:pause-animation">
+                          <div className="absolute inset-0 bg-teal-500 rounded-lg blur opacity-75 animate-pulse"></div>
+                          <div className="relative flex items-center justify-center h-14 w-14 bg-teal-600 rounded-lg transition-all duration-500 group-hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                          </div>
+                        </div>
+                      ),
+                      title: "Verified Certificates",
+                      description: "Earn industry-recognized certifications to boost your career prospects.",
+                      bg: "bg-gradient-to-br from-teal-900/30 to-teal-700/20"
+                    }
+                  ].map((item, index) => (
+                    <div
+                      key={`${loopIndex}-${index}`}
+                      className={`flex-shrink-0 w-72 sm:w-80 p-6 rounded-2xl backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 ${item.bg}`}
+                    >
+                      <div className="flex justify-center mb-6">{item.icon}</div>
+                      <h3 className="text-xl font-bold mb-3 text-white text-center">{item.title}</h3>
+                      <p className="text-gray-300 text-center text-sm sm:text-base">{item.description}</p>
+                    </div>
+                  ))}
+                </>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop grid (hidden on mobile) */}
+          <div className="hidden sm:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
             {[
-              {
-                icon: (
-                  <div className="relative group-hover:pause-animation">
-                    <div className="absolute inset-0 bg-purple-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                    <div className="relative flex items-center justify-center h-14 w-14 bg-purple-600 rounded-lg transition-all duration-500 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                    </div>
-                  </div>
-                ),
-                title: "Expert Instructors",
-                description: "Learn from industry leaders with real-world experience and proven teaching methods.",
-                bg: "bg-gradient-to-br from-purple-900/30 to-purple-700/20"
-              },
-              {
-                icon: (
-                  <div className="relative group-hover:pause-animation">
-                    <div className="absolute inset-0 bg-indigo-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                    <div className="relative flex items-center justify-center h-14 w-14 bg-indigo-600 rounded-lg transition-all duration-500 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                      </svg>
-                    </div>
-                  </div>
-                ),
-                title: "Expanding Curriculum",
-                description: "Access our ever-growing library with new courses added monthly across emerging technologies.",
-                bg: "bg-gradient-to-br from-indigo-900/30 to-indigo-700/20"
-              },
-              {
-                icon: (
-                  <div className="relative group-hover:pause-animation">
-                    <div className="absolute inset-0 bg-pink-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                    <div className="relative flex items-center justify-center h-14 w-14 bg-pink-600 rounded-lg transition-all duration-500 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                ),
-                title: "Vibrant Community",
-                description: "Connect with peers, mentors, and industry professionals in our active learning network.",
-                bg: "bg-gradient-to-br from-pink-900/30 to-pink-700/20"
-              },
-              {
-                icon: (
-                  <div className="relative group-hover:pause-animation">
-                    <div className="absolute inset-0 bg-blue-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                    <div className="relative flex items-center justify-center h-14 w-14 bg-blue-600 rounded-lg transition-all duration-500 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                      </svg>
-                    </div>
-                  </div>
-                ),
-                title: "Fast Learning",
-                description: "Accelerated courses designed to get you job-ready in weeks, not years.",
-                bg: "bg-gradient-to-br from-blue-900/30 to-blue-700/20"
-              },
-              {
-                icon: (
-                  <div className="relative group-hover:pause-animation">
-                    <div className="absolute inset-0 bg-teal-500 rounded-lg blur opacity-75 animate-pulse"></div>
-                    <div className="relative flex items-center justify-center h-14 w-14 bg-teal-600 rounded-lg transition-all duration-500 group-hover:scale-110">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                      </svg>
-                    </div>
-                  </div>
-                ),
-                title: "Verified Certificates",
-                description: "Earn industry-recognized certifications to boost your career prospects.",
-                bg: "bg-gradient-to-br from-teal-900/30 to-teal-700/20"
-              }
+
+
+
             ].map((item, index) => (
-              <div 
-                key={`${loopIndex}-${index}`}
-                className={`flex-shrink-0 w-72 sm:w-80 p-6 rounded-2xl backdrop-blur-md border border-white/10 hover:border-white/30 transition-all duration-300 ${item.bg}`}
+              <div
+                key={index}
+                className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-2"
               >
                 <div className="flex justify-center mb-6">{item.icon}</div>
                 <h3 className="text-xl font-bold mb-3 text-white text-center">{item.title}</h3>
-                <p className="text-gray-300 text-center text-sm sm:text-base">{item.description}</p>
+                <p className="text-gray-300 text-center">{item.description}</p>
               </div>
             ))}
-          </>
-        ))}
-      </div>
-    </div>
-
-    {/* Desktop grid (hidden on mobile) */}
-    <div className="hidden sm:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mt-12">
-      {[
-       
-       
-      
-      ].map((item, index) => (
-        <div
-          key={index}
-          className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-2"
-        >
-          <div className="flex justify-center mb-6">{item.icon}</div>
-          <h3 className="text-xl font-bold mb-3 text-white text-center">{item.title}</h3>
-          <p className="text-gray-300 text-center">{item.description}</p>
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
 
-  <style jsx>{`
+        <style jsx>{`
     @keyframes infinite-scroll {
       0% {
         transform: translateX(0);
@@ -694,7 +627,7 @@ const Home = () => {
       }
     }
   `}</style>
-</section>
+      </section>
 
       {/* FAQ Section */}
       <section className="relative py-20 overflow-hidden bg-gradient-to-br from-gray-900 to-indigo-900">
@@ -703,7 +636,7 @@ const Home = () => {
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-600 rounded-full filter blur-[100px]"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-600 rounded-full filter blur-[100px]"></div>
         </div>
-        
+
         <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
           {/* Animated header */}
           <div className="text-center mb-16">
@@ -751,28 +684,28 @@ const Home = () => {
                 answer: "Definitely. Our freelancer success tracks include client acquisition strategies, pricing models, and portfolio building alongside technical skills."
               }
             ].map((item, index) => (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className="group overflow-hidden rounded-2xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
               >
-                <button 
+                <button
                   className="flex items-center justify-between w-full p-6 text-left bg-gray-800/50 hover:bg-gray-800/70 transition-colors duration-200"
                   onClick={() => setOpenFaq(openFaq === index ? -1 : index)}
                 >
                   <h3 className="text-xl font-medium text-white group-hover:text-purple-300 transition-colors duration-200">
                     {item.question}
                   </h3>
-                  <svg 
+                  <svg
                     className={`w-6 h-6 text-purple-400 transform transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''}`}
-                    fill="none" 
-                    viewBox="0 0 24 24" 
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                
-                <div 
+
+                <div
                   className={`transition-all duration-500 ${openFaq === index ? 'max-h-[500px]' : 'max-h-0'} overflow-hidden`}
                 >
                   <div className="p-6 pt-0 text-gray-300 bg-gray-900/30 backdrop-blur-sm">

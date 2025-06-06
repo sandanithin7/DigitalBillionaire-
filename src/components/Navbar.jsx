@@ -153,7 +153,7 @@ const Navbar = () => {
                 to="/signup"
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                Start Learning
+               signup
                 <svg
                   className="ml-2 -mr-1 h-4 w-4"
                   fill="none"
@@ -303,7 +303,7 @@ const Navbar = () => {
                 className="block w-full text-center px-4 py-3 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Start Learning
+                signup
                 <svg
                   className="inline-block ml-2 -mr-1 h-4 w-4"
                   fill="none"
