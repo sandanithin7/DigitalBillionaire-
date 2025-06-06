@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from '/images/4.png';
 
@@ -9,6 +9,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,16 +35,25 @@ const Navbar = () => {
     { path: '/contact', label: 'Contact' }
   ];
 
-  // Add Dashboard link if user is logged in
-  if (user) {
-    navLinks.push({ path: '/dashboard', label: 'Dashboard' });
-  }
-  
+  const handlePackageClick = (path) => {
+    if (!user) {
+      // If user is not logged in, redirect to login page with return URL
+      navigate('/login', { state: { from: path } });
+    } else {
+      // If user is logged in, navigate to the package page
+      navigate(path);
+    }
+    // Close dropdowns
+    setIsDropdownOpen(false);
+    setIsMenuOpen(false);
+  };
+
   const packageLinks = [
-    { path: '/packages/pro', label: 'Pro Package' },
-    { path: '/packages/supreme', label: 'Supreme Package' },
-    { path: '/packages/premium', label: 'Premium Package' },
-    { path: '/packages/premium-plus', label: 'Premium Plus Package' }
+    { path: '/packages/basic', label: 'Basic Package', price: '₹1,999', description: 'Perfect for beginners' },
+    { path: '/packages/pro', label: 'Pro Package', price: '₹3,999', description: 'Most popular choice' },
+    { path: '/packages/advanced', label: 'Advanced Package', price: '₹5,999', description: 'For serious learners' },
+    { path: '/packages/premium', label: 'Premium Package', price: '₹7,999', description: 'Complete learning experience' },
+    { path: '/packages/premium-max', label: 'Premium Max Package', price: '₹9,999', description: 'Ultimate learning bundle' }
   ];
 
   // Close mobile menu when clicking outside
@@ -58,155 +68,186 @@ const Navbar = () => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isMenuOpen]);
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled 
-        ? 'bg-gradient-to-r from-black/95 via-gray-700/95 to-purple-800/95 backdrop-blur-md shadow-xl border-b-2 border-purple-500/30' 
-        : 'bg-gradient-to-r from-black/90 via-gray-700/90 to-purple-800/90 backdrop-blur-sm border-b-2 border-purple-500/20'
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+      isScrolled ? 'bg-black/90 backdrop-blur-md shadow-lg' : 'bg-black/70 backdrop-blur-sm'
     }`}>
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-24">
-          {/* Logo with enhanced styling */}
-          <Link to="/" className="flex items-center space-x-3 group">
-            <img 
-              src={logo}
-              alt="EduNexx Logo"
-              className="h-14 transform group-hover:scale-105 transition-transform duration-300"
-            />
-            <span className="text-3xl font-black bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-pink-500 transition-all duration-300">
-              EduNexx
-            </span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0 flex items-center">
+            <img className="h-8 w-auto" src={logo} alt="Edunexx" />
+            <span className="ml-2 text-lg font-bold text-white">Edunexx</span>
           </Link>
 
-          {/* Desktop Navigation with enhanced styling */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-4">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-base font-semibold transition-all duration-300 ${
+                className={`text-sm font-semibold transition-all duration-300 ${
                   isActive(link.path)
-                    ? 'text-white bg-purple-800/40 px-5 py-3 rounded-xl shadow-lg shadow-purple-500/20'
-                    : 'text-gray-200 hover:text-white hover:bg-purple-800/30 px-5 py-3 rounded-xl hover:shadow-lg hover:shadow-purple-500/10'
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-violet-600 px-3 py-2 rounded-lg shadow-lg'
+                    : 'text-gray-200 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg hover:shadow-lg'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
 
-            {/* Packages Dropdown with enhanced styling */}
-            <div className="relative">
+            {/* Packages Dropdown */}
+            <div className="relative inline-block">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`flex items-center text-base font-semibold transition-all duration-300 ${
+                className={`flex items-center text-sm font-semibold transition-all duration-300 ${
                   isPackageActive()
-                    ? 'text-white bg-purple-800/40 px-5 py-3 rounded-xl shadow-lg shadow-purple-500/20'
-                    : 'text-gray-200 hover:text-white hover:bg-purple-800/30 px-5 py-3 rounded-xl hover:shadow-lg hover:shadow-purple-500/10'
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-violet-600 px-3 py-2 rounded-lg shadow-lg'
+                    : 'text-gray-200 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg hover:shadow-lg'
                 }`}
               >
                 Packages
                 <svg
-                  className={`ml-2 h-5 w-5 transition-transform duration-300 ${
+                  className={`ml-1 h-4 w-4 transition-transform duration-300 ${
                     isDropdownOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-3 w-56 bg-gradient-to-br from-black/95 via-gray-800/95 to-purple-900/95 backdrop-blur-md rounded-xl shadow-2xl py-3 z-50 border-2 border-purple-500/30">
+                <div className="absolute right-0 mt-2 w-72 bg-gradient-to-br from-black/95 via-gray-900/95 to-purple-900/95 backdrop-blur-xl rounded-xl shadow-2xl py-2 z-50 border border-blue-500/20">
                   {packageLinks.map((link) => (
-                    <Link
+                    <button
                       key={link.path}
-                      to={link.path}
-                      className={`block px-5 py-3 text-base font-medium transition-all duration-300 ${
-                        isActive(link.path)
-                          ? 'text-white bg-purple-800/50'
-                          : 'text-gray-200 hover:text-white hover:bg-purple-800/40'
-                      }`}
-                      onClick={() => setIsDropdownOpen(false)}
+                      onClick={() => handlePackageClick(link.path)}
+                      className="w-full text-left px-4 py-3 hover:bg-white/5 transition-all duration-300"
                     >
-                      {link.label}
-                    </Link>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-white">{link.label}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{link.description}</div>
+                        </div>
+                        <div className="ml-4">
+                          <span className="text-blue-400 font-medium">{link.price}</span>
+                        </div>
+                      </div>
+                    </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Login/Signup or User Menu with enhanced styling */}
+            {/* Enhanced CTA button */}
+            {!user && (
+              <Link
+                to="/signup"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Start Learning
+                <svg
+                  className="ml-2 -mr-1 h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Link>
+            )}
+
+            {/* Auth Buttons */}
             {user ? (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
+                <Link
+                  to="/dashboard"
+                  className="text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 rounded-lg transition-all duration-300 hover:shadow-lg"
+                >
+                  Dashboard
+                </Link>
                 <button
-                  onClick={logout}
-                  className="text-base font-semibold text-gray-200 hover:text-white bg-purple-800/40 hover:bg-purple-800/50 px-5 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30"
+                  onClick={handleLogout}
+                  className="text-sm font-semibold text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300"
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="text-base font-semibold text-gray-200 hover:text-white bg-purple-800/40 hover:bg-purple-800/50 px-5 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30"
+                  className="text-sm font-semibold text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300"
                 >
                   Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 px-8 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30 border-2 border-purple-500/30"
-                >
-                  Sign Up
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile Menu Button with enhanced styling */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden text-gray-200 hover:text-white focus:outline-none transition-colors duration-300"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="h-8 w-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* Mobile menu button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-200 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors duration-300"
             >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2.5"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {isMenuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Mobile Menu with enhanced styling */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-gradient-to-br from-black/95 via-gray-800/95 to-purple-900/95 backdrop-blur-md shadow-2xl rounded-xl mt-3 py-4 absolute w-full left-0 border-2 border-purple-500/30">
+      {/* Mobile menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-gradient-to-br from-black/95 via-gray-900/95 to-purple-900/95 backdrop-blur-xl border-t border-blue-500/20">
+          <div className="px-4 pt-2 pb-3 space-y-2">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
-                className={`block px-5 py-3 text-base font-semibold transition-all duration-300 ${
+                className={`block px-3 py-2 rounded-lg text-base font-medium transition-all duration-300 ${
                   isActive(link.path)
-                    ? 'text-white bg-purple-800/50'
-                    : 'text-gray-200 hover:text-white hover:bg-purple-800/40'
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-violet-600'
+                    : 'text-gray-200 hover:text-white hover:bg-white/10'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -214,86 +255,109 @@ const Navbar = () => {
               </Link>
             ))}
 
-            {/* Mobile Packages Dropdown with enhanced styling */}
-            <div className="px-5 py-3">
+            {/* Mobile Packages Dropdown */}
+            <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className={`flex items-center justify-between w-full text-base font-semibold transition-all duration-300 ${
+                className={`flex items-center justify-between w-full px-3 py-2 rounded-lg text-base font-medium transition-all duration-300 ${
                   isPackageActive()
-                    ? 'text-white bg-purple-800/50'
-                    : 'text-gray-200 hover:text-white hover:bg-purple-800/40'
+                    ? 'text-white bg-gradient-to-r from-blue-600 to-violet-600'
+                    : 'text-gray-200 hover:text-white hover:bg-white/10'
                 }`}
               >
                 Packages
                 <svg
-                  className={`h-5 w-5 transition-transform duration-300 ${
+                  className={`h-4 w-4 transition-transform duration-300 ${
                     isDropdownOpen ? 'rotate-180' : ''
                   }`}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
 
               {isDropdownOpen && (
-                <div className="mt-3 space-y-2">
+                <div className="mt-2 space-y-1 bg-white/5 rounded-lg">
                   {packageLinks.map((link) => (
-                    <Link
+                    <button
                       key={link.path}
-                      to={link.path}
-                      className={`block px-5 py-3 text-base rounded-xl transition-all duration-300 ${
-                        isActive(link.path)
-                          ? 'text-white bg-purple-800/50'
-                          : 'text-gray-200 hover:text-white hover:bg-purple-800/40'
-                      }`}
-                      onClick={() => {
-                        setIsDropdownOpen(false);
-                        setIsMenuOpen(false);
-                      }}
+                      onClick={() => handlePackageClick(link.path)}
+                      className="w-full text-left px-4 py-3 hover:bg-white/5 transition-all duration-300"
                     >
-                      {link.label}
-                    </Link>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="text-sm font-semibold text-white">{link.label}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{link.description}</div>
+                        </div>
+                        <div className="ml-4">
+                          <span className="text-blue-400 font-medium">{link.price}</span>
+                        </div>
+                      </div>
+                    </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Mobile Login/Signup or User Menu with enhanced styling */}
-            {user ? (
-              <div className="px-5 py-3 space-y-3">
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full text-center text-base font-semibold text-gray-200 hover:text-white bg-purple-800/40 hover:bg-purple-800/50 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30"
+            {/* Enhanced Mobile CTA */}
+            {!user && (
+              <Link
+                to="/signup"
+                className="block w-full text-center px-4 py-3 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Start Learning
+                <svg
+                  className="inline-block ml-2 -mr-1 h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <div className="px-5 py-3 space-y-3">
-                <Link
-                  to="/login"
-                  className="block w-full text-center text-base font-semibold text-gray-200 hover:text-white bg-purple-800/40 hover:bg-purple-800/50 py-3 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="block w-full text-center text-base font-semibold text-white bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-700 hover:to-purple-900 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-purple-500/30 border-2 border-purple-500/30"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sign Up
-                </Link>
-              </div>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </Link>
             )}
+
+            {/* Mobile Auth Buttons */}
+            <div className="pt-2 space-y-2">
+              {user ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="block w-full text-center text-white bg-gradient-to-r from-blue-600 to-violet-600 px-3 py-2 rounded-lg font-medium transition-all duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-center text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg font-medium transition-all duration-300"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="block w-full text-center text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg font-medium transition-all duration-300"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </nav>
   );
 };

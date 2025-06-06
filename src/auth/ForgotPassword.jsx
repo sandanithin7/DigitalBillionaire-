@@ -1,51 +1,68 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
+import { authAPI } from '../services/api';
+import { sendPasswordResetEmail } from '../services/emailService';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
-  const form = useRef();
 
-  useEffect(() => {
-    // Initialize EmailJS with your public key
-    emailjs.init("YtdwI8Ln2wFyMF2Uw"); // Replace with your actual public key
-  }, []);
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setStatus({ type: '', message: '' });
 
-    const templateParams = {
-      user_email: email,
-      reset_link: `${window.location.origin}/reset-password?email=${encodeURIComponent(email)}`,
-      to_name: email.split('@')[0] // Uses the part before @ as the name
-    };
-
-    emailjs.send(
-      'service_s6ajolc', // Your EmailJS service ID
-      'template_immx6yi', // Your EmailJS template ID
-      templateParams
-    )
-    .then((result) => {
-      setStatus({
-        type: 'success',
-        message: 'Reset link has been sent to your email address! Please check your inbox.'
-      });
-      setEmail('');
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+    // Validate email format
+    if (!validateEmail(email)) {
       setStatus({
         type: 'error',
-        message: 'Failed to send reset link. Please try again later.'
+        message: 'Please enter a valid email address'
       });
-    })
-    .finally(() => {
       setIsLoading(false);
-    });
+      return;
+    }
+
+    try {
+      // First, verify the email with the backend
+      const response = await authAPI.forgotPassword(email);
+      console.log('Forgot password response:', response);
+
+      // If backend verification is successful, send the reset email using EmailJS
+      if (response.success) {
+        const resetLink = `${window.location.origin}/reset-password?token=${response.token}&email=${encodeURIComponent(email)}`;
+        
+        try {
+          await sendPasswordResetEmail(email, resetLink);
+          setStatus({
+            type: 'success',
+            message: 'Reset link has been sent to your email address! Please check your inbox.'
+          });
+          setEmail('');
+        } catch (emailError) {
+          console.error('Email sending error:', emailError);
+          setStatus({
+            type: 'error',
+            message: 'Failed to send reset email. Please try again later.'
+          });
+        }
+      } else {
+        throw new Error(response.message || 'Failed to process reset request');
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      setStatus({
+        type: 'error',
+        message: error.message || 'Failed to process your request. Please try again later.'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -69,7 +86,7 @@ const ForgotPassword = () => {
               <label htmlFor="email" className="sr-only">Email address</label>
               <input
                 id="email"
-                name="user_email"
+                name="email"
                 type="email"
                 autoComplete="email"
                 required
@@ -77,6 +94,7 @@ const ForgotPassword = () => {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
             </div>
           </div>

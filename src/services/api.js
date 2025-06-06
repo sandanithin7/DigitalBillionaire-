@@ -1,17 +1,13 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-// Create axios instance
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
-  },
-  withCredentials: true
+  }
 });
 
-// Add token to requests if it exists
+// Add a request interceptor
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -25,7 +21,7 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for error handling
+// Add a response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -39,33 +35,21 @@ api.interceptors.response.use(
 
 // Auth API calls
 export const authAPI = {
-  signup: async (userData) => {
+  login: async (credentials) => {
     try {
-      const response = await api.post('/auth/signup', userData);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
+      const response = await api.post('/auth/login', credentials);
       return response.data;
     } catch (error) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw new Error(error.message || 'An error occurred during signup');
+      throw error.response?.data || { message: 'An error occurred during login' };
     }
   },
 
-  login: async (credentials) => {
+  signup: async (userData) => {
     try {
-      const response = await api.post('http://localhost:5000/api/auth/login', credentials);
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-      }
+      const response = await api.post('/auth/signup', userData);
       return response.data;
     } catch (error) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw new Error(error.message || 'An error occurred during login');
+      throw error.response?.data || { message: 'An error occurred during signup' };
     }
   },
 
@@ -78,10 +62,7 @@ export const authAPI = {
       const response = await api.get('/auth/me');
       return response.data;
     } catch (error) {
-      if (error.response?.data) {
-        throw error.response.data;
-      }
-      throw new Error(error.message || 'An error occurred while fetching user data');
+      throw error.response?.data || { message: 'An error occurred while fetching user data' };
     }
   }
 };

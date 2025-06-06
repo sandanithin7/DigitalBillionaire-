@@ -2,53 +2,105 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
+
+/* Float Animations */
+@keyframes float {
+  0%, 100% {
     transform: translateY(0);
   }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
-@keyframes pulse {
+@keyframes float-delayed {
   0%, 100% {
-    opacity: 1;
+    transform: translateY(0);
   }
   50% {
-    opacity: .5;
+    transform: translateY(-15px);
   }
 }
 
-@keyframes shimmer {
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Auto Slide Animation */
+@keyframes slide {
   0% {
-    background-position: -200% 0;
+    transform: translateX(0);
+  }
+  33% {
+    transform: translateX(-100%);
+  }
+  66% {
+    transform: translateX(-200%);
   }
   100% {
-    background-position: 200% 0;
+    transform: translateX(0);
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
+@layer base {
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
 }
 
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-lg font-semibold transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50;
+  }
 }
 
-.animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.2) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+/* Custom Shadows */
+.shadow-soft {
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07),
+              0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-hover {
+  transition: box-shadow 0.3s ease;
+}
+
+.shadow-hover:hover {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1),
+              0 10px 20px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Custom Gradient Animation */
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Custom Scrollbar */
@@ -86,22 +138,7 @@
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
-
-/* Custom Shadows */
-.shadow-soft {
-  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07),
-              0 10px 20px -2px rgba(0, 0, 0, 0.04);
-}
-
-.shadow-hover {
-  transition: box-shadow 0.3s ease;
-}
-
-.shadow-hover:hover {
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1),
-              0 10px 20px -5px rgba(0, 0, 0, 0.04);
+  transition-duration: 500ms;
 }
 
 /* Custom Gradients */
@@ -262,13 +299,18 @@
   animation: float 3s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 8s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 .animate-spin-slow {
@@ -281,6 +323,90 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Animation classes for Educational Benefits section */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-pulse-delayed {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 2s;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 500ms;
+}
+
+/* Card hover effects */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+.group:hover .group-hover\:translate-x-2 {
+  transform: translateX(0.5rem);
+}
+
+/* Background blur effects */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+/* Responsive text gradients */
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Stats section animations */
+.text-purple-400, .text-pink-400, .text-indigo-400, .text-rose-400 {
+  transition: color 0.3s ease;
+}
+
+/* Container responsiveness */
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
   }
 }
 
@@ -318,32 +444,123 @@
   }
 }
 
-@layer base {
-  html {
-    @apply antialiased;
-  }
-  
-  body {
-    @apply bg-gray-50 text-gray-900;
-  }
+/* Educational Benefits Section Styles */
+.edu-benefits {
+  position: relative;
+  padding: 4rem 0;
+  overflow: hidden;
 }
 
-@layer components {
-  .container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-  
-  .btn {
-    @apply px-4 py-2 rounded-lg font-semibold transition-colors duration-200;
-  }
-  
-  .btn-primary {
-    @apply bg-blue-600 text-white hover:bg-blue-700;
-  }
-  
-  .btn-secondary {
-    @apply bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50;
-  }
+.edu-benefits__bg-element {
+  position: absolute;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 50%;
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.edu-benefits__bg-element--purple {
+  top: 25%;
+  right: -8rem;
+  background: rgba(168, 85, 247, 0.1);
+  animation: pulseSlow 4s ease-in-out infinite;
+}
+
+.edu-benefits__bg-element--pink {
+  bottom: 25%;
+  left: -8rem;
+  background: rgba(236, 72, 153, 0.1);
+  animation: pulseSlow 4s ease-in-out infinite 2s;
+}
+
+@keyframes pulseSlow {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
+
+.edu-benefits__card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.edu-benefits__card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.05);
+}
+
+.edu-benefits__image {
+  height: 12rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.edu-benefits__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.edu-benefits__card:hover .edu-benefits__image img {
+  transform: scale(1.1);
+}
+
+.edu-benefits__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.edu-benefits__text {
+  color: #d1d5db;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.edu-benefits__link {
+  display: flex;
+  align-items: center;
+  color: #a855f7;
+  font-weight: 500;
+}
+
+.edu-benefits__link svg {
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.edu-benefits__card:hover .edu-benefits__link svg {
+  transform: translateX(0.5rem);
+}
+
+.edu-benefits__stats {
+  margin-top: 5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.edu-benefits__stat {
+  text-align: center;
+}
+
+.edu-benefits__stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.edu-benefits__stat-label {
+  color: #d1d5db;
+  font-size: 0.875rem;
 }
 
 
