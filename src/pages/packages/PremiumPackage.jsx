@@ -6,35 +6,35 @@ const PremiumPackage = () => {
     name: "Premium",
     features: [
       "Access to 35 courses",
-      "24/7 Priority Support",
-      "VIP Community Access",
-      "Unlimited Live Sessions",
+      "VIP Support",
+      "Community Access",
+      "Daily Live Sessions",
       "Premium Resources",
-      "All Tools Access"
+      "24/7 Priority Support"
     ],
-    mrp: "₹19,999",
+    mrp: "₹9,999",
     price: "₹7,999",
-    description: "Unlock premium features and get unlimited access to live sessions",
+    description: "Premium learning experience with VIP support and daily live sessions",
     gradient: "from-rose-600 to-pink-500",
     bgGradient: "from-rose-900/40 via-black to-black",
-    image: "/images/4.png",
+    image: "/images/premium-banner.jpg",
     highlights: [
-      "35 Premium Courses",
-      "Unlimited Sessions",
-      "24/7 Support"
+      "35 Courses",
+      "VIP Support",
+      "Daily Sessions"
     ],
     benefits: [
       {
-        title: "Premium Learning",
-        description: "Access all premium courses and unlimited sessions"
-      },
-      {
-        title: "24/7 Support",
-        description: "Get round-the-clock priority support"
-      },
-      {
         title: "VIP Access",
-        description: "Join our exclusive VIP community"
+        description: "Get access to 35 courses with lifetime validity"
+      },
+      {
+        title: "VIP Support",
+        description: "Get priority VIP support 24/7"
+      },
+      {
+        title: "Daily Sessions",
+        description: "Join interactive daily live sessions"
       }
     ]
   };
@@ -44,14 +44,14 @@ const PremiumPackage = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           {/* Floating Elements */}
-          <div className="absolute top-20 left-10 w-20 h-20 bg-rose-500/20 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-32 h-32 bg-pink-400/20 rounded-full blur-xl animate-pulse-delayed"></div>
+          <div className="absolute top-20 left-10 w-20 h-20 bg-amber-500/20 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute top-40 right-10 w-32 h-32 bg-orange-400/20 rounded-full blur-xl animate-pulse-delayed"></div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div className="space-y-8 relative">
               <div className="relative">
-                <div className="absolute -inset-1 bg-gradient-to-r from-rose-600 to-pink-500 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-amber-600 to-orange-500 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
                 <div className="relative">
                   <h1 className={`text-5xl font-bold bg-gradient-to-r ${packageDetails.gradient} bg-clip-text text-transparent mb-4`}>
                     {packageDetails.name} Package
@@ -102,7 +102,7 @@ const PremiumPackage = () => {
             {/* Right Image */}
             <div className="relative">
               <div className="relative z-10 transform hover:scale-105 transition-transform duration-500">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-rose-600 to-pink-500 rounded-2xl blur opacity-50"></div>
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-600 to-orange-500 rounded-2xl blur opacity-50"></div>
                 <img
                   src={packageDetails.image}
                   alt={`${packageDetails.name} Package`}
@@ -122,7 +122,7 @@ const PremiumPackage = () => {
               {packageDetails.features.map((feature, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-rose-400/50 transition-colors duration-300 group hover:transform hover:scale-105"
+                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-amber-400/50 transition-colors duration-300 group hover:transform hover:scale-105"
                 >
                   <div className="flex items-start">
                     <span className={`flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-r ${packageDetails.gradient} flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300`}>
@@ -154,7 +154,7 @@ const PremiumPackage = () => {
               {packageDetails.benefits.map((benefit, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-rose-400/50 transition-colors duration-300 transform hover:scale-105"
+                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-amber-400/50 transition-colors duration-300 transform hover:scale-105"
                 >
                   <h3 className="text-xl font-bold text-white mb-2">{benefit.title}</h3>
                   <p className="text-gray-300">{benefit.description}</p>
@@ -170,15 +170,15 @@ const PremiumPackage = () => {
               {[
                 {
                   question: "What's included in the Premium package?",
-                  answer: "The Premium package includes access to 35 courses, unlimited live sessions, 24/7 priority support, and VIP community access."
+                  answer: "The Premium package includes access to 35 courses, VIP support, community access, daily live sessions, premium resources, and 24/7 priority support."
                 },
                 {
-                  question: "How is Premium different from Advanced?",
-                  answer: "Premium offers more courses, unlimited live sessions (instead of daily), 24/7 priority support, and VIP community access."
+                  question: "How is Premium different from Premium Max?",
+                  answer: "Premium offers access to 35 courses, VIP support, community access, daily live sessions, and premium resources. Premium Max offers complete course access, personal mentorship, elite community access, and additional exclusive benefits not available in other packages."
                 },
                 {
-                  question: "Can I upgrade to Premium Max?",
-                  answer: "Yes, you can upgrade to Premium Max at any time and pay the difference."
+                  question: "What kind of mentorship is included?",
+                  answer: "You get one-on-one mentorship sessions with industry experts who will guide you through your learning journey and career growth."
                 },
                 {
                   question: "Is there a payment plan?",
@@ -187,7 +187,7 @@ const PremiumPackage = () => {
               ].map((faq, index) => (
                 <div
                   key={index}
-                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-rose-400/50 transition-colors duration-300"
+                  className="bg-white/5 backdrop-blur-md p-6 rounded-xl border border-white/10 hover:border-amber-400/50 transition-colors duration-300"
                 >
                   <h3 className="text-xl font-bold text-white mb-2">{faq.question}</h3>
                   <p className="text-gray-300">{faq.answer}</p>

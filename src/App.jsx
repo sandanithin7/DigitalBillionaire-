@@ -13,6 +13,7 @@ import ProPackage from './pages/packages/ProPackage';
 import AdvancedPackage from './pages/packages/AdvancedPackage';
 import PremiumPackage from './pages/packages/PremiumPackage';
 import PremiumMaxPackage from './pages/packages/PremiumMaxPackage';
+
 import Dashboard from './pages/Dashboard';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';

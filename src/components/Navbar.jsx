@@ -36,24 +36,19 @@ const Navbar = () => {
   ];
 
   const handlePackageClick = (path) => {
-    if (!user) {
-      // If user is not logged in, redirect to login page with return URL
-      navigate('/login', { state: { from: path } });
-    } else {
-      // If user is logged in, navigate to the package page
-      navigate(path);
-    }
+    // Simply navigate to the package page
+    navigate(path);
     // Close dropdowns
     setIsDropdownOpen(false);
     setIsMenuOpen(false);
   };
 
   const packageLinks = [
-    { path: '/packages/basic', label: 'Basic Package', price: '₹1,999', description: 'Perfect for beginners' },
-    { path: '/packages/pro', label: 'Pro Package', price: '₹3,999', description: 'Most popular choice' },
-    { path: '/packages/advanced', label: 'Advanced Package', price: '₹5,999', description: 'For serious learners' },
-    { path: '/packages/premium', label: 'Premium Package', price: '₹7,999', description: 'Complete learning experience' },
-    { path: '/packages/premium-max', label: 'Premium Max Package', price: '₹9,999', description: 'Ultimate learning bundle' }
+    { path: '/packages/basic', label: 'Basic', price: '₹1,999', description: 'Perfect for beginners' },
+    { path: '/packages/pro', label: 'Pro', price: '₹3,999', description: 'Most popular choice' },
+    { path: '/packages/advanced', label: 'Advanced', price: '₹5,999', description: 'For serious learners' },
+    { path: '/packages/premium', label: 'Premium', price: '₹7,999', description: 'Complete learning experience' },
+    { path: '/packages/premium-max', label: 'Premium Max', price: '₹9,999', description: 'Ultimate learning bundle' }
   ];
 
   // Close mobile menu when clicking outside

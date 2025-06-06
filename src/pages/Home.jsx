@@ -221,9 +221,10 @@ const Home = () => {
                 recommended: false,
                 gradientFrom: "from-blue-500",
                 gradientTo: "to-blue-700",
+                route: "/packages/basic"
               },
               {
-                name: "Pro pakage",
+                name: "Pro",
                 features: [
                   "Access to 15 courses",
                   "Priority Support",
@@ -234,8 +235,9 @@ const Home = () => {
                 price: "₹3,999",
                 badge: "POPULAR",
                 recommended: false,
-                gradientFrom: "from-purple-500",
-                gradientTo: "to-purple-700",
+                gradientFrom: "from-emerald-500",
+                gradientTo: "to-emerald-700",
+                route: "/packages/pro"
               },
               {
                 name: "Advanced",
@@ -250,8 +252,9 @@ const Home = () => {
                 price: "₹5,999",
                 badge: "BEST VALUE",
                 recommended: true,
-                gradientFrom: "from-indigo-500",
-                gradientTo: "to-indigo-700",
+                gradientFrom: "from-purple-500",
+                gradientTo: "to-purple-700",
+                route: "/packages/advanced"
               },
               {
                 name: "Premium",
@@ -268,6 +271,7 @@ const Home = () => {
                 recommended: false,
                 gradientFrom: "from-rose-500",
                 gradientTo: "to-rose-700",
+                route: "/packages/premium"
               },
               {
                 name: "Premium Max",
@@ -285,6 +289,7 @@ const Home = () => {
                 recommended: false,
                 gradientFrom: "from-pink-500",
                 gradientTo: "to-pink-700",
+                route: "/packages/premium-max"
               },
             ].map((pkg, index) => (
               <div
@@ -365,7 +370,7 @@ const Home = () => {
 
                   {/* Enhanced CTA button */}
                   <Link
-                    to={`/packages/${pkg.name.toLowerCase()}`}
+                    to={pkg.route}
                     className={`block w-full bg-gradient-to-r ${pkg.gradientFrom} ${pkg.gradientTo} text-white text-center py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-bold transform transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-${pkg.gradientFrom}/20 relative overflow-hidden group`}
                   >
                     <span className="relative z-10">Get Started</span>

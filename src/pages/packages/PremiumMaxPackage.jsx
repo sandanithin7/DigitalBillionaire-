@@ -6,35 +6,36 @@ const PremiumMaxPackage = () => {
     name: "Premium Max",
     features: [
       "Access to All Courses",
-      "24/7 VIP Support",
-      "Elite Community Access",
-      "Unlimited Live Sessions",
-      "All Resources",
-      "All Tools + Mentorship"
+      "VIP Support",
+      "Community Access",
+      "Daily Live Sessions",
+      "Premium Resources",
+      "24/7 Priority Support",
+      "1-on-1 Mentoring"
     ],
-    mrp: "₹24,999",
+    mrp: "₹12,999",
     price: "₹9,999",
-    description: "Our most comprehensive package with exclusive benefits and personal mentorship",
+    description: "Ultimate learning experience with complete access and personal mentoring",
     gradient: "from-amber-600 to-orange-500",
     bgGradient: "from-amber-900/40 via-black to-black",
-    image: "/images/banner.jpg",
+    image: "/images/premium-max-banner.jpg",
     highlights: [
-      "All Courses Access",
-      "Personal Mentorship",
-      "Elite Benefits"
+      "All Courses",
+      "VIP Support",
+      "1-on-1 Mentoring"
     ],
     benefits: [
       {
         title: "Complete Access",
-        description: "Get access to all courses, tools, and resources"
+        description: "Get access to all courses with lifetime validity"
       },
       {
-        title: "Personal Mentorship",
-        description: "One-on-one guidance from industry experts"
+        title: "VIP Support",
+        description: "Get priority VIP support 24/7"
       },
       {
-        title: "Elite Community",
-        description: "Join our exclusive elite community"
+        title: "Personal Mentoring",
+        description: "One-on-one mentoring sessions with experts"
       }
     ]
   };
