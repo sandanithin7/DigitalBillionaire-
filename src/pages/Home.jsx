@@ -494,7 +494,7 @@ const Home = () => {
             {/* Carousel track with duplicated items for seamless looping */}
             <div className="flex animate-infinite-scroll space-x-6 sm:space-x-8">
               {[...Array(2)].map((_, loopIndex) => (
-                <>
+                <React.Fragment key={`loop-${loopIndex}`}>
                   {[
                     {
                       icon: (
@@ -581,7 +581,7 @@ const Home = () => {
                       <p className="text-gray-300 text-center text-sm sm:text-base">{item.description}</p>
                     </div>
                   ))}
-                </>
+                </React.Fragment>
               ))}
             </div>
           </div>

@@ -151,22 +151,9 @@ const Navbar = () => {
             {!user && (
               <Link
                 to="/signup"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-500/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="text-sm font-semibold text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300"
               >
-               signup
-                <svg
-                  className="ml-2 -mr-1 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
+                Signup
               </Link>
             )}
 
@@ -300,23 +287,10 @@ const Navbar = () => {
             {!user && (
               <Link
                 to="/signup"
-                className="block w-full text-center px-4 py-3 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-violet-600 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                className="block w-full text-center px-4 py-3 text-base font-medium text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >
-                signup
-                <svg
-                  className="inline-block ml-2 -mr-1 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
+                Signup
               </Link>
             )}
 

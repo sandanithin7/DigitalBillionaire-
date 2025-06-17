@@ -1,9 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
+import { createOrder, verifyPayment } from '../../services/paymentService';
+
+const RAZORPAY_KEY_ID = 'rzp_test_nIGIidBVXBYUap';
 
 const AdvancedPackage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onerror = () => {
+      console.error('Failed to load Razorpay script');
+      toast.error('Payment system is temporarily unavailable');
+    };
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   const packageDetails = {
     name: "Advanced",
@@ -16,7 +41,7 @@ const AdvancedPackage = () => {
       "24/7 Support"
     ],
     mrp: "₹7,999",
-    price: "₹5,999",
+    price: 5999,
     description: "Comprehensive learning package with premium features and lifetime access",
     gradient: "from-purple-500 to-pink-600",
     bgGradient: "from-slate-900 via-purple-900/10 to-slate-900",
@@ -43,18 +68,116 @@ const AdvancedPackage = () => {
   };
 
   const handlePurchase = async () => {
-    if (!isProcessing) {
+    if (!isAuthenticated) {
+      toast.info('Please login to continue');
+      navigate('/login', { 
+        state: { 
+          returnUrl: window.location.pathname,
+          package: packageDetails
+        }
+      });
+      return;
+    }
+
+    if (!window.Razorpay) {
+      toast.error('Payment system is loading. Please try again in a moment.');
+      return;
+    }
+
+    try {
       setIsProcessing(true);
-      try {
-        // Simulate payment process
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        alert('Redirecting to payment gateway...');
-        navigate('/payment-success');
-      } catch (error) {
-        alert('There was an error processing your payment. Please try again.');
-      } finally {
-        setIsProcessing(false);
+      // Convert amount to paise (Razorpay expects amount in smallest currency unit)
+      const amountInPaise = Math.round(packageDetails.price * 100);
+      
+      console.log('Creating order...', { amount: amountInPaise });
+      
+      // Create order
+      const response = await createOrder(amountInPaise, 'advanced');
+      console.log('Order created:', response);
+
+      if (!response.success || !response.order) {
+        throw new Error(response.message || 'Failed to create order');
       }
+
+      // Configure Razorpay options
+      const options = {server: {
+  port: 5174,
+  proxy: {
+    '/api': {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false
+    }
+  }
+}
+        key: RAZORPAY_KEY_ID,
+        amount: response.order.amount,
+        currency: response.order.currency || 'INR',
+        name: 'Edunexx',
+        description: `Purchase ${packageDetails.name} Package`,
+        order_id: response.order.id,
+        handler: async function(response) {
+          try {
+            console.log('Payment success:', response);
+            // Verify payment
+            const result = await verifyPayment({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
+
+            if (result.success) {
+              toast.success('Payment successful! Package purchased.');
+              navigate('/dashboard');
+            } else {
+              toast.error('Payment verification failed. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            toast.error(error.message || 'Payment verification failed');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: `${user?.firstName} ${user?.lastName}`.trim() || '',
+          email: user?.email || '',
+        },
+        theme: {
+          color: '#9333ea'
+        },
+        modal: {
+          ondismiss: function() {
+            console.log('Payment modal closed');
+            setIsProcessing(false);
+          },
+          escape: true,
+          backdropclose: false
+        },
+        notes: {
+          packageType: 'advanced'
+        }
+      };
+
+      console.log('Initializing Razorpay with options:', { ...options, key: '***' });
+
+      // Initialize Razorpay
+      const razorpay = new window.Razorpay(options);
+
+      // Handle payment failures
+      razorpay.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        toast.error(response.error.description || 'Payment failed');
+        setIsProcessing(false);
+      });
+
+      // Open Razorpay modal
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error.message || 'Failed to process payment');
+      setIsProcessing(false);
     }
   };
 
@@ -71,7 +194,7 @@ const AdvancedPackage = () => {
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
                 <span className="inline-block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  Advanced Package
+                  {packageDetails.name} Package
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
@@ -88,15 +211,25 @@ const AdvancedPackage = () => {
                   <div className="flex flex-col items-center">
                     <p className="text-gray-400 text-lg line-through mb-2">MRP: {packageDetails.mrp}</p>
                     <div className="text-5xl font-bold text-white mb-4">
-                      ₹5,999
+                      ₹{packageDetails.price}
                       <span className="text-lg text-gray-400 ml-2">/ lifetime</span>
                     </div>
                     <button
                       onClick={handlePurchase}
                       disabled={isProcessing}
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl py-4 px-8 font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl py-4 px-8 font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
                     >
-                      {isProcessing ? "Processing..." : "Get Started Now"}
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        'Get Started Now'
+                      )}
                     </button>
                   </div>
                 </div>
@@ -105,7 +238,7 @@ const AdvancedPackage = () => {
                 <div className="bg-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10">
                   <h3 className="text-xl font-semibold text-white mb-6">What's Included</h3>
                   <div className="space-y-4">
-                    {packageDetails.features.map((feature, index) => (
+                    {packageDetails.features?.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center">
                           <svg className="w-3.5 h-3.5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -144,27 +277,6 @@ const AdvancedPackage = () => {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                {/* Support Card */}
-                <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="p-3 bg-purple-500/20 rounded-lg">
-                      <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-medium text-white">Premium Support</h4>
-                      <p className="text-gray-400">24/7 support for all your needs</p>
-                    </div>
-                  </div>
-                  <Link
-                    to="/contact"
-                    className="block w-full text-center bg-white/10 hover:bg-white/20 text-white rounded-xl py-3 px-4 font-medium transition-colors duration-200"
-                  >
-                    Contact Support
-                  </Link>
                 </div>
               </div>
             </div>
@@ -236,12 +348,12 @@ const AdvancedPackage = () => {
                   answer: "The Advanced package includes access to 25 courses, premium support, community access, weekly live sessions, premium resources, and 24/7 support."
                 },
                 {
-                  question: "How is Advanced different from Premium?",
-                  answer: "Advanced offers complete course access, premium support, and additional exclusive benefits not available in other packages."
+                  question: "How is Advanced different from Pro?",
+                  answer: "The Advanced package offers more courses, premium support with 24/7 availability, and additional premium resources compared to the Pro package."
                 },
                 {
                   question: "What kind of support is included?",
-                  answer: "You get premium support with 24/7 availability and priority response times for all your learning needs."
+                  answer: "You get premium 24/7 support with faster response times and access to our community forum."
                 },
                 {
                   question: "Is there a payment plan?",

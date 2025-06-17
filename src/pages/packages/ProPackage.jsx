@@ -1,9 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
+import { createOrder, verifyPayment } from '../../services/paymentService';
+
+const RAZORPAY_KEY_ID = 'rzp_test_nIGIidBVXBYUap';
 
 const ProPackage = () => {
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false);
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      setRazorpayLoaded(true);
+    };
+
+    script.onerror = () => {
+      console.error('Failed to load Razorpay script');
+      toast.error('Payment system is temporarily unavailable');
+    };
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
   const packageDetails = {
     name: "Pro",
@@ -15,7 +45,7 @@ const ProPackage = () => {
       "Advanced Resources"
     ],
     mrp: "₹5,999",
-    price: "₹3,999",
+    price: 3999,
     description: "Enhanced learning package with lifetime access to advanced features",
     gradient: "from-emerald-500 to-teal-600",
     bgGradient: "from-slate-900 via-emerald-900/10 to-slate-900",
@@ -42,18 +72,149 @@ const ProPackage = () => {
   };
 
   const handlePurchase = async () => {
-    if (!isProcessing) {
+    if (!isAuthenticated) {
+      toast.info('Please login to continue');
+      navigate('/login', { 
+        state: { 
+          returnUrl: window.location.pathname,
+          package: packageDetails
+        }
+      });
+      return;
+    }
+
+    if (!razorpayLoaded) {
+      toast.error('Payment system is loading. Please try again in a moment.');
+      return;
+    }
+
+    try {
       setIsProcessing(true);
-      try {
-        // Simulate payment process
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        alert('Redirecting to payment gateway...');
-        navigate('/payment-success');
-      } catch (error) {
-        alert('There was an error processing your payment. Please try again.');
-      } finally {
-        setIsProcessing(false);
+      // Convert amount to paise (Razorpay expects amount in smallest currency unit)
+      const amountInPaise = Math.round(packageDetails.price * 100);
+      
+      console.log('Creating order...', { amount: amountInPaise });
+      
+      // Create order
+      const response = await createOrder(amountInPaise, 'pro');
+      console.log('Order created:', response);
+
+      if (!response.success || !response.order) {
+        throw new Error(response.message || 'Failed to create order');
       }
+
+      // Configure Razorpay options
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: response.order.amount,
+        currency: response.order.currency || 'INR',
+        name: 'Edunexx',
+        description: `Purchase ${packageDetails.name} Package`,
+        order_id: response.order.id,
+        handler: async function(response) {
+          try {
+            console.log('Payment success:', response);
+            // Verify payment
+            const result = await verifyPayment({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature
+            });
+
+            if (result.success) {
+              toast.success('Payment successful! Package purchased.');
+              navigate('/dashboard');
+            } else {
+              toast.error('Payment verification failed. Please contact support.');
+            }
+          } catch (error) {
+            console.error('Payment verification error:', error);
+            toast.error(error.message || 'Payment verification failed');
+          } finally {
+            setIsProcessing(false);
+          }
+        },
+        prefill: {
+          name: `${user?.firstName} ${user?.lastName}`.trim() || '',
+          email: user?.email || '',
+        },
+        theme: {
+          color: '#10b981'
+        },
+        modal: {
+          ondismiss: function() {
+            console.log('Payment modal closed');
+            setIsProcessing(false);
+          },
+          escape: true,
+          backdropclose: false
+        },
+        notes: {
+          packageType: 'pro'
+        }
+      };
+
+      console.log('Initializing Razorpay with options:', { ...options, key: '***' });
+
+      // Initialize Razorpay
+      const razorpay = new window.Razorpay(options);
+
+      // Handle payment failures
+      razorpay.on('payment.failed', function(response) {
+        console.error('Payment failed:', response.error);
+        toast.error(response.error.description || 'Payment failed');
+        setIsProcessing(false);
+      });
+
+      // Open Razorpay modal
+      razorpay.open();
+
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast.error(error.message || 'Failed to process payment');
+      setIsProcessing(false);
+    }
+  };
+
+  const handlePayment = () => {
+    if (!razorpayLoaded) {
+      toast.error('Please wait...');
+      return;
+    }
+
+    try {
+      setIsProcessing(true);
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: 299900, // ₹2,999 in paise
+        currency: 'INR',
+        name: 'Edunexx',
+        description: 'Pro Package',
+        handler: function(response) {
+          localStorage.setItem('packagePurchased', JSON.stringify({
+            name: 'Pro Package',
+            amount: 2999,
+            paymentId: response.razorpay_payment_id,
+            date: new Date().toISOString()
+          }));
+          toast.success('Payment successful!');
+          navigate('/dashboard');
+        },
+        modal: {
+          ondismiss: () => {
+            setIsProcessing(false);
+            toast.info('Payment cancelled');
+          }
+        },
+        theme: { color: '#3399cc' }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      toast.error('Payment failed');
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -70,7 +231,7 @@ const ProPackage = () => {
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight">
                 <span className="inline-block bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                  Pro Package
+                  {packageDetails.name} Package
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
@@ -87,15 +248,25 @@ const ProPackage = () => {
                   <div className="flex flex-col items-center">
                     <p className="text-gray-400 text-lg line-through mb-2">MRP: {packageDetails.mrp}</p>
                     <div className="text-5xl font-bold text-white mb-4">
-                      ₹3,999
+                      ₹{packageDetails.price}
                       <span className="text-lg text-gray-400 ml-2">/ lifetime</span>
                     </div>
                     <button
                       onClick={handlePurchase}
                       disabled={isProcessing}
-                      className="w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl py-4 px-8 font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl py-4 px-8 font-semibold text-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2`}
                     >
-                      {isProcessing ? "Processing..." : "Get Started Now"}
+                      {isProcessing ? (
+                        <>
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </>
+                      ) : (
+                        'Get Started Now'
+                      )}
                     </button>
                   </div>
                 </div>
@@ -104,7 +275,7 @@ const ProPackage = () => {
                 <div className="bg-white/[0.02] backdrop-blur-xl rounded-2xl p-8 border border-white/10">
                   <h3 className="text-xl font-semibold text-white mb-6">What's Included</h3>
                   <div className="space-y-4">
-                    {packageDetails.features.map((feature, index) => (
+                    {packageDetails.features?.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center">
                           <svg className="w-3.5 h-3.5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -143,27 +314,6 @@ const ProPackage = () => {
                       </div>
                     ))}
                   </div>
-                </div>
-
-                {/* Support Card */}
-                <div className="bg-gradient-to-br from-emerald-500/10 to-teal-500/10 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="p-3 bg-emerald-500/20 rounded-lg">
-                      <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 className="text-lg font-medium text-white">Priority Support</h4>
-                      <p className="text-gray-400">Get faster responses to your queries</p>
-                    </div>
-                  </div>
-                  <Link
-                    to="/contact"
-                    className="block w-full text-center bg-white/10 hover:bg-white/20 text-white rounded-xl py-3 px-4 font-medium transition-colors duration-200"
-                  >
-                    Contact Support
-                  </Link>
                 </div>
               </div>
             </div>
@@ -235,12 +385,12 @@ const ProPackage = () => {
                   answer: "The Pro package includes access to 15 courses, priority support, community access, weekly live sessions, and advanced resources."
                 },
                 {
-                  question: "How is Pro different from Premium?",
-                  answer: "Pro offers advanced course access, priority support, and community access, while Premium offers complete course access, personal mentorship, and additional exclusive benefits."
+                  question: "How is Pro different from Basic?",
+                  answer: "The Pro package offers more courses, priority support instead of basic support, and weekly live sessions instead of monthly sessions."
                 },
                 {
                   question: "What kind of support is included?",
-                  answer: "You get priority support with faster response times and access to our support team during extended hours."
+                  answer: "You get priority support with faster response times and access to our community forum."
                 },
                 {
                   question: "Is there a payment plan?",

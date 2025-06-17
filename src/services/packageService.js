@@ -1,68 +1,38 @@
-import axios from 'axios';
+import api from '../config/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-class PackageService {
+const packageService = {
   // Get all packages
-  async getAllPackages() {
+  getAllPackages: async () => {
     try {
-      const response = await axios.get(`${API_URL}/packages`);
+      const response = await api.get('/packages');
       return response.data;
     } catch (error) {
-      throw this.handleError(error);
+      throw new Error(error.response?.data?.message || 'Failed to fetch packages');
     }
-  }
+  },
 
-  // Get single package
-  async getPackage(id) {
+  // Purchase a package
+  purchasePackage: async (packageId, amount) => {
     try {
-      const response = await axios.get(`${API_URL}/packages/${id}`);
+      const response = await api.post('/payment/create-order', { 
+        packageId,
+        amount
+      });
       return response.data;
     } catch (error) {
-      throw this.handleError(error);
+      throw new Error(error.response?.data?.message || 'Failed to purchase package');
     }
-  }
+  },
 
-  // Purchase package
-  async purchasePackage(packageId, token) {
+  // Get user's purchased packages
+  getUserPackages: async () => {
     try {
-      const response = await axios.post(
-        `${API_URL}/packages/${packageId}/purchase`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      const response = await api.get('/packages/user');
       return response.data;
     } catch (error) {
-      throw this.handleError(error);
+      throw new Error(error.response?.data?.message || 'Failed to fetch user packages');
     }
   }
+};
 
-  // Handle errors
-  handleError(error) {
-    if (error.response) {
-      // Server responded with error
-      return {
-        success: false,
-        message: error.response.data.message || 'An error occurred'
-      };
-    } else if (error.request) {
-      // Request made but no response
-      return {
-        success: false,
-        message: 'No response from server'
-      };
-    } else {
-      // Error setting up request
-      return {
-        success: false,
-        message: error.message
-      };
-    }
-  }
-}
-
-export default new PackageService(); 
+export default packageService; 

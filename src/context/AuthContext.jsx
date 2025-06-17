@@ -1,7 +1,11 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Updated API_URL to match backend server
+const API_URL = 'http://localhost:5001/api';
+
+// Add default axios config
+axios.defaults.withCredentials = true;
 
 const AuthContext = createContext(null);
 
@@ -23,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const fetchUser = async () => {
     try {
       const response = await axios.get(`${API_URL}/auth/me`);
-      setUser(response.data);
+      setUser(response.data.data); // Fix: access user data from response.data.data
     } catch (error) {
       console.error('Error fetching user:', error);
       logout();
@@ -41,7 +45,8 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       return user;
     } catch (error) {
-      throw error.response?.data || error;
+      console.error('Login error:', error);
+      throw error.response?.data || { message: 'Failed to login' };
     }
   };
 
@@ -50,7 +55,8 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${API_URL}/auth/signup`, userData);
       return response.data;
     } catch (error) {
-      throw error.response?.data || error;
+      console.error('Signup error:', error);
+      throw error.response?.data || { message: 'Failed to signup' };
     }
   };
 
@@ -79,4 +85,4 @@ export const useAuth = () => {
   return context;
 };
 
-export default AuthContext; 
+export default AuthContext;
