@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import logo from "/images/Hero1.png";
+// import logo from "/images/herosection.jpg";
+import logo from "/public/images/herosection.png"; //
 import Footer from "../components/Footer";
 
 const Home = () => {
